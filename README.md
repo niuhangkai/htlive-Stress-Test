@@ -1,2 +1,12 @@
-# htlive-Stress-Test
-模拟直播间游客测试
+### 需要先安装好node.js
+
+### 依赖安装
+```
+npm install
+
+```
+### 启动
+```
+npm run serve
+
+```
