@@ -50,7 +50,7 @@ setTimeout(() => {
     }
   }]
   inquirer.prompt(prompList).then(async answers=>{
-    log(chalk.red.bold(`正在启动...直播间人数为${answers.process*answers.tab+1}`));
+    log(chalk.red.bold(`正在启动...直播间人数增加${answers.process*answers.tab}`));
     /**
      * answers.process = 进程数
      * answers.tab = 每个进程的tab数量
