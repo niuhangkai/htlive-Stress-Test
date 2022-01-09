@@ -67,6 +67,7 @@ setTimeout(() => {
         const context = await browser.createIncognitoBrowserContext();
         for (let j = 0; j < toNumber(answers.tab); j++) {
           const page = await context.newPage();
+          await page.setDefaultNavigationTimeout(0);
           page.goto(answers.url);
         }
       })
