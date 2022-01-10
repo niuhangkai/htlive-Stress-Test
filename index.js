@@ -95,7 +95,7 @@ setTimeout(() => {
           const browser = await puppeteer.launch({
             // 是否以无界面模式启动
             headless:true,
-            // executablePath:"/usr/bin/google-chrome-stable",
+            executablePath:"/usr/bin/google-chrome-stable",
             args: [
               '--disable-gpu', // GPU硬件加速
               '--disable-dev-shm-usage', // 创建临时文件共享内存
@@ -103,7 +103,7 @@ setTimeout(() => {
               '--no-first-run', // 没有设置首页。在启动的时候，就会打开一个空白页面。
               '--no-sandbox', // 沙盒模式
               '--no-zygote',
-              // '--single-process', // 单进程运行
+              '--single-process', // 单进程运行
             ]
           });
           // 无痕模式
