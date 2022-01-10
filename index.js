@@ -3,6 +3,8 @@ const inquirer = require('inquirer');
 const puppeteer = require('puppeteer');
 const chalk = require('chalk');
 const figlet = require('figlet');
+const cluster = require("cluster")
+const os = require("os")
 // /usr/bin/google-chrome-stable
 const log = console.log;
 const DELAY_TIME = 500
@@ -44,6 +46,7 @@ setTimeout(() => {
     type:'input',
     message:chalk.rgb(0, 204, 255)('请输入直播间完整地址'),
     name:'url',
+    default:"https://qtest.hellotalk8.com/h5live/v1/htlive/Y9lLdE9j?hidebar=1",
     validate(val) {
       const rules = /^https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*$/i
       if (!rules.test(val)) {
@@ -77,32 +80,60 @@ setTimeout(() => {
     //   })
     // }
     // task.forEach((cb) => cb())
-    const task = []
-    for (let i = 0; i < toNumber(answers.process); i++) {
-        const browser = await puppeteer.launch({
-          // 是否以无界面模式启动
-          headless:true,
-          executablePath:"/usr/bin/google-chrome-stable",
-          args: ['--disable-gpu', // GPU硬件加速
-            '--disable-dev-shm-usage', // 创建临时文件共享内存
-            '--disable-setuid-sandbox', // uid沙盒
-            '--no-first-run', // 没有设置首页。在启动的时候，就会打开一个空白页面。
-            '--no-sandbox', // 沙盒模式
-            '--no-zygote',
-            '--single-process', // 单进程运行
-          ]
-        });
-        // 无痕模式
-        const context = await browser.createIncognitoBrowserContext();
-        for (let j = 0; j < toNumber(answers.tab); j++) {
-          const page = await context.newPage();
-          await page.setDefaultNavigationTimeout(0);
-          await page.goto(answers.url);
-          counter++;
-          console.log(chalk.rgb(0, 204, 255)(`已经增加${counter}...`))
-        }
-    }
-    task.forEach((cb) => cb())
+    
+    // const task = []
+    // if (cluster.isMaster) {
+    //   const cpus = os.cpus().length
+    //   for (let i = 0; i < cpus; i++) {
+    //       cluster.fork()
+    //   }
+    //   cluster.on("exit", (worker, code, signal) => {
+    //       console.log("工作进程" + worker.process.pid + "已退出")
+    //   })
+    // } else {
+      for (let i = 0; i < toNumber(answers.process); i++) {
+          const browser = await puppeteer.launch({
+            // 是否以无界面模式启动
+            headless:true,
+            // executablePath:"/usr/bin/google-chrome-stable",
+            args: [
+              '--disable-gpu', // GPU硬件加速
+              '--disable-dev-shm-usage', // 创建临时文件共享内存
+              '--disable-setuid-sandbox', // uid沙盒
+              '--no-first-run', // 没有设置首页。在启动的时候，就会打开一个空白页面。
+              '--no-sandbox', // 沙盒模式
+              '--no-zygote',
+              // '--single-process', // 单进程运行
+            ]
+          });
+          // 无痕模式
+          const context = await browser.createIncognitoBrowserContext();
+          for (let j = 0; j < toNumber(answers.tab); j++) {
+            const page = await context.newPage();
+            await page.setDefaultNavigationTimeout(0);
+
+            await page.goto(answers.url);
+            await page.setRequestInterception(true)
+
+            await page.on('request', (request) => {
+              // request.resourceType() == 'stylesheet' ||
+              if ( request.resourceType() == 'font' || request.resourceType() == 'image' ) {
+                request.abort()
+              } else {
+                request.continue()
+              }
+            })
+            // 隐藏页面
+            await page.addStyleTag({content: 'html{display: none}'})
+            // 阻止css资源加载
+            // 点击开始
+            // await page.tap("form[class='password-form'] > button[type='submit']");
+            counter++;
+            console.log(chalk.rgb(0, 204, 255)(`已经增加${counter}...`))
+          }
+      }
+    // }
+    // task.forEach((cb) => cb())
   });
 },DELAY_TIME)
 
