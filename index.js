@@ -14,6 +14,7 @@ figlet('HT Live Test!', function(err, data) {
   log(data)
 });
 log(chalk.red.bold("tip:直播间最终人数为开启的进程数*标签数,结束进程可以按ctrl+c退出"));
+process.setMaxListeners(0)
 setTimeout(() => {
   const prompList = [{ 
     type:'input',
