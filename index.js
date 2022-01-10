@@ -5,6 +5,7 @@ const chalk = require('chalk');
 const figlet = require('figlet');
 const log = console.log;
 const DELAY_TIME = 500
+let counter = 0
 figlet('HT Live Test!', function(err, data) {
   if (err) {
     log('Something went wrong...');
@@ -56,10 +57,27 @@ setTimeout(() => {
      * answers.process = 进程数
      * answers.tab = 每个进程的tab数量
      * answers.url = 直播间地址
+     * 
      */
+    // const task = []
+    // for (let i = 0; i < toNumber(answers.process); i++) {
+    //   task.push(async () => {
+    //     const browser = await puppeteer.launch({
+    //       // 是否以无界面模式启动
+    //       headless:false
+    //     });
+    //     // 无痕模式
+    //     const context = await browser.createIncognitoBrowserContext();
+    //     for (let j = 0; j < toNumber(answers.tab); j++) {
+    //       const page = await context.newPage();
+    //       await page.setDefaultNavigationTimeout(0);
+    //       page.goto(answers.url);
+    //     }
+    //   })
+    // }
+    // task.forEach((cb) => cb())
     const task = []
     for (let i = 0; i < toNumber(answers.process); i++) {
-      task.push(async () => {
         const browser = await puppeteer.launch({
           // 是否以无界面模式启动
           headless:true
@@ -69,9 +87,10 @@ setTimeout(() => {
         for (let j = 0; j < toNumber(answers.tab); j++) {
           const page = await context.newPage();
           await page.setDefaultNavigationTimeout(0);
-          page.goto(answers.url);
+          await page.goto(answers.url);
+          counter++;
+          console.log(chalk.rgb(0, 204, 255)(`已经增加${counter}...`))
         }
-      })
     }
     task.forEach((cb) => cb())
   });
