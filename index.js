@@ -94,7 +94,7 @@ setTimeout(() => {
       let browser = await puppeteer.launch({
         userDataDir: './cache',
         // 是否以无界面模式启动
-        headless:false,
+        headless:true,
         devtools:false,
         // executablePath:"/usr/bin/google-chrome-stable",
         args: [
