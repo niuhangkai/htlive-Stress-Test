@@ -91,21 +91,101 @@ setTimeout(() => {
     //       console.log("工作进程" + worker.process.pid + "已退出")
     //   })
     // } else {
+      let browser = await puppeteer.launch({
+        userDataDir: './cache',
+        // 是否以无界面模式启动
+        headless:false,
+        devtools:false,
+        // executablePath:"/usr/bin/google-chrome-stable",
+        args: [
+          '--disable-accelerated-2d-canvas',
+          '--autoplay-policy=user-gesture-required',
+          '--disable-background-networking',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-breakpad',
+          '--disable-client-side-phishing-detection',
+          '--disable-component-update',
+          '--disable-default-apps',
+          '--disable-dev-shm-usage',
+          '--disable-domain-reliability',
+          '--disable-extensions',
+          '--disable-features=AudioServiceOutOfProcess',
+          '--disable-hang-monitor',
+          '--disable-ipc-flooding-protection',
+          '--disable-notifications',
+          '--disable-offer-store-unmasked-wallet-cards',
+          '--disable-popup-blocking',
+          '--disable-print-preview',
+          '--disable-prompt-on-repost',
+          '--disable-renderer-backgrounding',
+          '--disable-setuid-sandbox',
+          '--disable-speech-api',
+          '--disable-sync',
+          '--hide-scrollbars',
+          '--ignore-gpu-blacklist',
+          '--metrics-recording-only',
+          '--mute-audio',
+          '--no-default-browser-check',
+          '--no-first-run',
+          '--no-pings',
+          '--no-sandbox',
+          '--no-zygote',
+          '--password-store=basic',
+          '--use-gl=swiftshader',
+          '--use-mock-keychain',
+          /*************************** */
+          '--autoplay-policy=user-gesture-required',
+          '--disable-background-networking',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-breakpad',
+          '--disable-client-side-phishing-detection',
+          '--disable-component-update',
+          '--disable-default-apps',
+          '--disable-dev-shm-usage',
+          '--disable-domain-reliability',
+          '--disable-extensions',
+          '--disable-features=AudioServiceOutOfProcess',
+          '--disable-hang-monitor',
+          '--disable-ipc-flooding-protection',
+          '--disable-notifications',
+          '--disable-offer-store-unmasked-wallet-cards',
+          '--disable-popup-blocking',
+          '--disable-print-preview',
+          '--disable-prompt-on-repost',
+          '--disable-renderer-backgrounding',
+          '--disable-setuid-sandbox',
+          '--disable-speech-api',
+          '--disable-sync',
+          '--hide-scrollbars',
+          '--ignore-gpu-blacklist',
+          '--metrics-recording-only',
+          '--mute-audio',
+          '--no-default-browser-check',
+          '--no-first-run',
+          '--no-pings',
+          '--no-sandbox',
+          '--no-zygote',
+          '--password-store=basic',
+          '--use-gl=swiftshader',
+          '--use-mock-keychain',
+          /************************** */
+          '--disable-gpu', // GPU硬件加速
+          '--disable-dev-shm-usage', // 创建临时文件共享内存
+          '--disable-setuid-sandbox', // uid沙盒
+          '--no-first-run', // 没有设置首页。在启动的时候，就会打开一个空白页面。
+          '--no-sandbox', // 沙盒模式
+          '--no-zygote',
+          '--disable-extensions',
+          // '--single-process', // 单进程运行
+        ]
+      });
+      const browserWSEndpoint = browser.wsEndpoint();
       for (let i = 0; i < toNumber(answers.process); i++) {
-          const browser = await puppeteer.launch({
-            // 是否以无界面模式启动
-            headless:true,
-            // executablePath:"/usr/bin/google-chrome-stable",
-            args: [
-              '--disable-gpu', // GPU硬件加速
-              '--disable-dev-shm-usage', // 创建临时文件共享内存
-              '--disable-setuid-sandbox', // uid沙盒
-              '--no-first-run', // 没有设置首页。在启动的时候，就会打开一个空白页面。
-              '--no-sandbox', // 沙盒模式
-              '--no-zygote',
-              // '--single-process', // 单进程运行
-            ]
-          });
+        browser = await puppeteer.connect({
+          browserWSEndpoint,
+        });
           // 无痕模式
           const context = await browser.createIncognitoBrowserContext();
           for (let j = 0; j < toNumber(answers.tab); j++) {
@@ -132,6 +212,7 @@ setTimeout(() => {
             console.log(chalk.rgb(0, 204, 255)(`已经增加${counter}...`))
           }
       }
+
     // }
     // task.forEach((cb) => cb())
   });
